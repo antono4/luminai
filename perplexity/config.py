@@ -37,7 +37,7 @@ SEARCH_SOURCES = ["web", "scholar", "social"]
 SEARCH_LANGUAGES = ["en-US", "en-GB", "pt-BR", "es-ES", "fr-FR", "de-DE"]
 
 # Model Mappings
-MODEL_MAPPINGS: Dict[str, Dict[str, str]] = {
+MODEL_MAPPINGS: Dict[str, Dict[str | None, str]] = {
     "auto": {None: "turbo"},
     "pro": {
         None: "pplx_pro",

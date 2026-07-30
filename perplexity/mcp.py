@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+from typing import Any, Dict
 
 from mcp.server.fastmcp import FastMCP
 
@@ -9,6 +10,8 @@ from perplexity.logger import setup_logger
 
 logger = setup_logger("mcp")
 
+client: Client
+
 mcp = FastMCP(
     "perplexity",
     host=os.environ.get("MCP_HOST", "127.0.0.1"),
@@ -16,13 +19,17 @@ mcp = FastMCP(
 )
 
 
-def _extract_answer(resp: dict) -> str:
+def _extract_answer(resp: Dict[str, Any]) -> str:
     # search() responses have no top-level "answer" key — the text lives in
     # the ask_text block's markdown_block.answer.
-    for block in resp.get("blocks", []):
+    blocks = resp.get("blocks", [])
+    for block in blocks:
         if block.get("intended_usage") == "ask_text":
-            return block.get("markdown_block", {}).get("answer", "")
-    return resp.get("answer", "")
+            markdown_block = block.get("markdown_block", {})
+            answer = markdown_block.get("answer", "")
+            return str(answer) if answer else ""
+    answer = resp.get("answer", "")
+    return str(answer) if answer else ""
 
 
 def perplexity_ask(query: str) -> str:
@@ -111,7 +118,8 @@ def main():
         logger.warning(
             "No PERPLEXITY_COOKIES set — running anonymously. "
             "Only perplexity_ask is available. "
-            "Set PERPLEXITY_COOKIES to enable perplexity_search, perplexity_reason, and perplexity_research."
+            "Set PERPLEXITY_COOKIES to enable perplexity_search, "
+            "perplexity_reason, and perplexity_research."
         )
 
     transport = os.environ.get("MCP_TRANSPORT", "stdio")

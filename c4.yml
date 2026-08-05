@@ -1,0 +1,218 @@
+# Self-Healing AI Agent Configuration for LuminAI
+# C4 Model: Context, Containers, Components, Code
+
+metadata:
+  name: "LuminAI Self-Healing Agent"
+  version: "1.0.0"
+  description: "AI agent untuk Perplexity API wrapper yang bisa memperbaiki bug secara otomatis"
+  author: "AI Development Team"
+  repository: "antono4/luminai"
+
+# ============================================
+# C4 Level 1: Context Diagram
+# ============================================
+context:
+  system_name: "LuminAI Self-Healing System"
+  description: "Sistem AI agent yang mampu mendeteksi, menganalisis, dan memperbaiki bug secara otonom pada Perplexity API wrapper"
+  
+  external_entities:
+    - name: "User"
+      description: "Pengguna yang menggunakan LuminAI library"
+      boundaries: "external"
+    
+    - name: "Perplexity API"
+      description: "External Perplexity API service"
+      boundaries: "external"
+    
+    - name: "GitHub"
+      description: "Repository untuk version control dan CI/CD"
+      boundaries: "external"
+
+  relationships:
+    - from: "User"
+      to: "LuminAI Library"
+      description: "Uses Perplexity API via LuminAI"
+    
+    - from: "LuminAI Library"
+      to: "Perplexity API"
+      description: "Makes API requests"
+
+# ============================================
+# C4 Level 2: Container Diagram
+# ============================================
+containers:
+  - name: "Perplexity Client"
+    type: "library"
+    description: "Main client library for Perplexity API"
+    technology: "Python"
+    responsibilities:
+      - "API communication"
+      - "Request/Response handling"
+      - "Error management"
+
+  - name: "Self-Healing Agent"
+    type: "agent"
+    description: "Agent untuk auto-fix bugs"
+    technology: "Python + OpenHands SDK"
+    responsibilities:
+      - "Bug detection"
+      - "Root cause analysis"
+      - "Auto-fix generation"
+
+  - name: "Dashboard"
+    type: "web"
+    description: "Web dashboard untuk monitoring"
+    technology: "HTML + JavaScript"
+    responsibilities:
+      - "Real-time monitoring"
+      - "Statistics display"
+      - "Control interface"
+
+  - name: "CI/CD Pipeline"
+    type: "pipeline"
+    description: "GitHub Actions workflows"
+    technology: "GitHub Actions"
+    responsibilities:
+      - "Automated testing"
+      - "Release management"
+      - "Deployment"
+
+# ============================================
+# C4 Level 3: Component Diagram
+# ============================================
+components:
+  api_client:
+    modules:
+      - name: "Client"
+        description: "Main API client"
+      - name: "Config"
+        description: "Configuration management"
+      - name: "Driver"
+        description: "HTTP driver"
+
+  self_healing:
+    modules:
+      - name: "BugDetector"
+        description: "Detect bugs from logs/tests"
+      - name: "CodeAnalyzer"
+        description: "Analyze root cause"
+      - name: "SelfRepair"
+        description: "Generate and apply fixes"
+      - name: "Verification"
+        description: "Verify fixes with tests"
+
+  dashboard:
+    modules:
+      - name: "Statistics"
+        description: "Display stats"
+      - name: "Logs"
+        description: "Activity logs viewer"
+      - name: "Controls"
+        description: "User controls"
+
+# ============================================
+# Self-Healing Configuration
+# ============================================
+self_healing:
+  enabled: true
+  auto_fix: true
+  max_retries: 3
+  interval_minutes: 10
+  
+  detection_sources:
+    - type: "test_failure"
+      command: "pytest"
+    - type: "runtime_error"
+      patterns:
+        - "ConnectionError"
+        - "TimeoutError"
+        - "APIError"
+    - type: "log_file"
+      path: "perplexity.log"
+
+  fix_strategies:
+    - name: "syntax_fix"
+      description: "Fix syntax errors"
+      priority: 1
+    - name: "api_error_fix"
+      description: "Fix API error handling"
+      priority: 2
+    - name: "config_fix"
+      description: "Fix configuration issues"
+      priority: 3
+
+  safety_checks:
+    - "Verify no breaking changes"
+    - "Check test coverage"
+    - "Validate API compatibility"
+
+# ============================================
+# Releases Configuration
+# ============================================
+releases:
+  enabled: true
+  schedule:
+    interval_minutes: 10
+    timezone: "UTC"
+  
+  auto_release:
+    enabled: true
+    conditions:
+      - "all_tests_passed: true"
+      - "bugs_fixed_count: > 0"
+  
+  release_notes:
+    format: "markdown"
+    sections:
+      - name: "features"
+        title: "🆕 New Features"
+      - name: "bug_fixes"
+        title: "🐛 Bug Fixes"
+      - name: "improvements"
+        title: "⚡ Improvements"
+      - name: "workflow_stats"
+        title: "📊 Workflow Statistics"
+
+  changelog:
+    path: "docs/CHANGELOG.md"
+    template: |
+      # Changelog
+      
+      ## Release {version} - {date}
+      
+      ### Workflow Statistics
+      - Bugs Detected: {bugs_detected}
+      - Bugs Fixed: {bugs_fixed}
+      - Success Rate: {success_rate}%
+      - Total Runs: {total_runs}
+
+# ============================================
+# Monitoring & Alerting
+# ============================================
+monitoring:
+  enabled: true
+  metrics:
+    - "bugs_detected"
+    - "bugs_fixed"
+    - "fix_success_rate"
+    - "test_pass_rate"
+    - "api_response_time"
+  
+  alerting:
+    - channel: "log"
+      level: "info"
+    - channel: "github_issue"
+      on_critical: true
+
+# ============================================
+# Security Configuration
+# ============================================
+security:
+  code_review_required: true
+  max_fix_size: 200
+  blocked_patterns:
+    - "eval("
+    - "exec("
+    - "os.system"
+  allowed_file_extensions:
+    - ".py"

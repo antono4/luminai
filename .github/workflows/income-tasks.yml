@@ -1,0 +1,205 @@
+name: 📋 GitHub Income - Task Manager
+
+on:
+  schedule:
+    # Run every 30 minutes to update task status
+    - cron: '*/30 * * * *'
+  
+  workflow_dispatch:
+    inputs:
+      method:
+        description: 'Method to focus on'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - github_sponsors
+          - marketplace
+          - open_source_business
+          - popular_projects
+          - github_actions
+          - bug_bounty
+
+jobs:
+  manage-tasks:
+    name: 📝 Manage Tasks
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: 📋 Generate Task List
+        run: |
+          python << 'EOF'
+          import os
+          import json
+          import datetime
+          from pathlib import Path
+          
+          tasks = {
+              "github_sponsors": [
+                  {"task": "Setup GitHub Sponsors profile", "priority": "high", "status": "pending"},
+                  {"task": "Create sponsorship tiers ($5, $10, $50, $100)", "priority": "high", "status": "pending"},
+                  {"task": "Add FUNDING.yml to projects", "priority": "medium", "status": "pending"},
+                  {"task": "Write compelling bio with value proposition", "priority": "high", "status": "pending"},
+                  {"task": "Promote sponsorship on social media", "priority": "medium", "status": "pending"},
+                  {"task": "Create sponsor-only content/rewards", "priority": "medium", "status": "pending"},
+                  {"task": "Reach out to potential corporate sponsors", "priority": "low", "status": "pending"},
+                  {"task": "Thank sponsors publicly and consistently", "priority": "medium", "status": "pending"}
+              ],
+              "marketplace": [
+                  {"task": "Research popular GitHub Marketplace apps", "priority": "high", "status": "pending"},
+                  {"task": "Identify niche with low competition", "priority": "high", "status": "pending"},
+                  {"task": "Create MVP of Marketplace app", "priority": "high", "status": "pending"},
+                  {"task": "Build landing page for app", "priority": "medium", "status": "pending"},
+                  {"task": "Add Terms of Service and Privacy Policy", "priority": "medium", "status": "pending"},
+                  {"task": "Submit app to GitHub Marketplace", "priority": "high", "status": "pending"},
+                  {"task": "Create demo video", "priority": "low", "status": "pending"},
+                  {"task": "Market app on social media and forums", "priority": "medium", "status": "pending"}
+              ],
+              "open_source_business": [
+                  {"task": "Choose business model (Open Core/BaaS/Support)", "priority": "high", "status": "pending"},
+                  {"task": "Define free vs premium features", "priority": "high", "status": "pending"},
+                  {"task": "Set up legal entity (if needed)", "priority": "medium", "status": "pending"},
+                  {"task": "Create pricing page", "priority": "high", "status": "pending"},
+                  {"task": "Set up payment system (Stripe/Paddle)", "priority": "high", "status": "pending"},
+                  {"task": "Update license file", "priority": "medium", "status": "pending"},
+                  {"task": "Create support system", "priority": "medium", "status": "pending"},
+                  {"task": "Acquire first paying customer", "priority": "high", "status": "pending"}
+              ],
+              "popular_projects": [
+                  {"task": "Identify 3 project ideas that solve real problems", "priority": "high", "status": "pending"},
+                  {"task": "Build first project MVP", "priority": "high", "status": "pending"},
+                  {"task": "Write comprehensive README with examples", "priority": "high", "status": "pending"},
+                  {"task": "Add screenshots/GIFs to README", "priority": "medium", "status": "pending"},
+                  {"task": "Submit project to relevant directories", "priority": "medium", "status": "pending"},
+                  {"task": "Engage with issues and PRs promptly", "priority": "medium", "status": "pending"},
+                  {"task": "Promote on Reddit/Hacker News", "priority": "medium", "status": "pending"},
+                  {"task": "Build community (Discord/Slack)", "priority": "low", "status": "pending"}
+              ],
+              "github_actions": [
+                  {"task": "Learn GitHub Actions basics", "priority": "high", "status": "pending"},
+                  {"task": "Create first reusable workflow", "priority": "high", "status": "pending"},
+                  {"task": "Build action with good documentation", "priority": "high", "status": "pending"},
+                  {"task": "Create example workflows", "priority": "medium", "status": "pending"},
+                  {"task": "Submit action to GitHub Marketplace", "priority": "high", "status": "pending"},
+                  {"task": "Promote action in communities", "priority": "medium", "status": "pending"},
+                  {"task": "Add premium features for paid tier", "priority": "medium", "status": "pending"},
+                  {"task": "Get first 100 users", "priority": "high", "status": "pending"}
+              ],
+              "bug_bounty": [
+                  {"task": "Learn OWASP Top 10", "priority": "high", "status": "pending"},
+                  {"task": "Register on HackerOne", "priority": "high", "status": "pending"},
+                  {"task": "Register on Bugcrowd", "priority": "high", "status": "pending"},
+                  {"task": "Learn Burp Suite or OWASP ZAP", "priority": "high", "status": "pending"},
+                  {"task": "Find first valid bug (even low severity)", "priority": "high", "status": "pending"},
+                  {"task": "Write clear, detailed report", "priority": "high", "status": "pending"},
+                  {"task": "Build reputation for quality reports", "priority": "medium", "status": "pending"},
+                  {"task": "Apply to private programs", "priority": "medium", "status": "pending"}
+              ]
+          }
+          
+          # Save tasks
+          tasks_dir = Path(".github/income-progress")
+          tasks_dir.mkdir(parents=True, exist_ok=True)
+          
+          with open(tasks_dir / "tasks.json", "w") as f:
+              json.dump(tasks, f, indent=2)
+          
+          # Generate task report
+          report = "# 📋 GitHub Income Strategies - Task List\n\n"
+          report += f"*Generated at: {datetime.datetime.now().isoformat()}*\n\n"
+          
+          for method, method_tasks in tasks.items():
+              report += f"## {method.replace('_', ' ').title()}\n\n"
+              report += "| # | Task | Priority | Status |\n"
+              report += "|---|------|----------|--------|\n"
+              
+              for i, task in enumerate(method_tasks, 1):
+                  emoji = "🔴" if task['priority'] == 'high' else "🟡" if task['priority'] == 'medium' else "🟢"
+                  status_emoji = "⏳" if task['status'] == 'pending' else "✅"
+                  report += f"| {i} | {task['task']} | {emoji} {task['priority']} | {status_emoji} |\n"
+              
+              report += "\n"
+          
+          report_file = Path("github-income-strategies/TASKS.md")
+          report_file.parent.mkdir(parents=True, exist_ok=True)
+          with open(report_file, "w") as f:
+              f.write(report)
+          
+          print("Tasks generated successfully!")
+          print(f"Total tasks: {sum(len(t) for t in tasks.values())}")
+          EOF
+          
+      - name: 🚀 Push Tasks
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Actions Bot"
+          git add -A
+          git diff --staged --quiet || git commit -m "📋 Auto-update: Task list [skip ci]"
+          git push origin feature/github-income-strategies || echo "Push skipped"
+          
+      - name: 📊 Create Issue for High Priority Tasks
+        if: ${{ github.event.inputs.method == 'all' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const highPriorityTasks = [
+              { method: "GitHub Sponsors", task: "Setup GitHub Sponsors profile" },
+              { method: "GitHub Marketplace", task: "Research popular apps" },
+              { method: "Open Source Business", task: "Choose business model" },
+              { method: "Popular Projects", task: "Identify 3 project ideas" },
+              { method: "GitHub Actions", task: "Learn GitHub Actions basics" },
+              { method: "Bug Bounty", task: "Learn OWASP Top 10" }
+            ];
+            
+            // Check if there's already an issue for today
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: ["income-strategies", "priority-tasks"]
+            });
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayIssue = issues.find(i => i.title.includes(today));
+            
+            if (!todayIssue) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🎯 Priority Tasks - ${today}`,
+                body: "## Today's High Priority Tasks\n\n" + highPriorityTasks.map((t, i) => `${i+1}. **[${t.method}]** ${t.task}`).join("\n"),
+                labels: ["income-strategies", "priority-tasks"]
+              });
+              console.log("Created priority tasks issue");
+            } else {
+              console.log("Today's issue already exists");
+            }
+
+  daily-reminder:
+    name: ⏰ Daily Reminder
+    runs-on: ubuntu-latest
+    if: ${{ github.event.schedule == '0 9 * * *' }}  # Run daily at 9 AM
+    steps:
+      - name: 📝 Create Daily Reminder
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const today = new Date().toISOString().split('T')[0];
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `💰 Daily Income Check - ${today}`,
+              body: `## Daily Reminder\n\nTime to work on your GitHub income strategies!\n\n### Quick Actions:\n1. Check progress in TASKS.md\n2. Work on one high-priority task\n3. Update your progress\n\n*This is an automated daily reminder.*`,
+              labels: ["income-strategies", "daily-reminder"]
+            });
+            console.log("Daily reminder created");

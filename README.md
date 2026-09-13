@@ -1,2 +1,31 @@
-Last updated: 2026-09-14 02:51:59 WIB
-Last updated: 2026-09-14 02:56:30 WIB
+# luminai
+
+
+
+## 📋 Overview
+
+This repository contains **74 files** and is built with the following technologies:
+
+Python, HTML
+
+## 🚀 Quick Start
+
+```bash
+pip install -r requirements.txt
+python main.py
+```
+
+## ✨ Features
+
+- 📝 Auto-generated documentation
+
+## 🛠️ Technologies
+
+Python, HTML
+
+## 📄 License
+
+MIT License
+
+---
+*Last updated: 2026-09-14 04:41:53 WIB*
